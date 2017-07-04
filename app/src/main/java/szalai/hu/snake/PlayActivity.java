@@ -16,7 +16,11 @@ import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-public class PlayActivity extends Activity implements SensorEventListener{
+import szalai.hu.snake.entitiy.Enemy;
+
+import static szalai.hu.snake.R.drawable.enemy;
+
+public class PlayActivity extends Activity implements SensorEventListener {
 
 
     private SensorManager sensorManager;
@@ -24,9 +28,13 @@ public class PlayActivity extends Activity implements SensorEventListener{
     private float x;
     private float y;
     private ImageView snakeBody;
-    RelativeLayout container;
-    int width;
-    int height;
+    private RelativeLayout container;
+    private int width;
+    private int height;
+    private boolean up;
+    private boolean down;
+    private boolean right;
+    private boolean left;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,30 +54,20 @@ public class PlayActivity extends Activity implements SensorEventListener{
         });
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-        sensorManager.registerListener(this,sensor,SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        ImageView enemyView = new ImageView(this);
+        enemyView.setImageResource(enemy);
+        Enemy enemy = new Enemy(39, 65);
+        enemyView.setX(250);
+        enemyView.setY(250);
+        container.addView(enemyView);
     }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
-        this.x =  event.values[0];
-        this.y =  event.values[1];
-
-        if(x<0 && snakeBody.getX()<width-75){
-            snakeBody.setX(snakeBody.getX()+25);
-            Log.i("info","right");
-        }
-        if(x>0 && snakeBody.getX()>25){
-            snakeBody.setX(snakeBody.getX()-25);
-            Log.i("info","left");
-        }
-        if(y>0 && snakeBody.getY()<height-75){
-            snakeBody.setY(snakeBody.getY()+25);
-            Log.i("info","down");
-        }
-        if(y<0 && snakeBody.getY()>25){
-            snakeBody.setY(snakeBody.getY()-25);
-            Log.i("info","up");
-        }
+        this.x = event.values[0];
+        this.y = event.values[1];
+        stearing();
     }
 
     @Override
@@ -77,32 +75,31 @@ public class PlayActivity extends Activity implements SensorEventListener{
 
     }
 
-    private int getRelativeLeft(View myView) {
-        if (myView.getParent() == myView.getRootView())
-            return myView.getLeft();
-        else
-            return myView.getLeft() + getRelativeLeft((View) myView.getParent());
-    }
-
-    private int getRelativeTop(View myView) {
-        if (myView.getParent() == myView.getRootView())
-            return myView.getTop();
-        else
-            return myView.getTop() + getRelativeTop((View) myView.getParent());
+    private void stearing() {
+        Log.i("info", snakeBody.getX() + " " + snakeBody.getY());
+        if (x < 2 && snakeBody.getX() < width - 75) {
+            snakeBody.setX(snakeBody.getX() + 25);
+            Log.i("info", "right");
+        }
+        if (x > -2 && snakeBody.getX() > 25) {
+            snakeBody.setX(snakeBody.getX() - 25);
+            Log.i("info", "left");
+        }
+        if (y > 2 && snakeBody.getY() < height - 75) {
+            snakeBody.setY(snakeBody.getY() + 25);
+            Log.i("info", "down");
+        }
+        if (y < -2 && snakeBody.getY() > 25) {
+            snakeBody.setY(snakeBody.getY() - 25);
+            Log.i("info", "up");
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        sensorManager.unregisterListener(this,sensor);
+        sensorManager.unregisterListener(this, sensor);
     }
 
-    class MyGlobalListenerClass implements ViewTreeObserver.OnGlobalLayoutListener{
-        @Override
-        public void onGlobalLayout() {
-            View v = (View) findViewById(R.id.container);
-            width = v.getWidth();
-            height = v.getHeight();
-        }
-    }
+
 }
