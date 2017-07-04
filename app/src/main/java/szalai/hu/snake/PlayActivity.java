@@ -34,7 +34,7 @@ public class PlayActivity extends Activity implements SensorEventListener{
         setContentView(R.layout.activity_play);
         container = (RelativeLayout) findViewById(R.id.container);
         snakeBody = (ImageView) findViewById(R.id.snakeimage);
-        /*ViewTreeObserver vto = container.getViewTreeObserver();
+        ViewTreeObserver vto = container.getViewTreeObserver();
         vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
             @Override
             public boolean onPreDraw() {
@@ -43,7 +43,7 @@ public class PlayActivity extends Activity implements SensorEventListener{
                 height = container.getHeight();
                 return true;
             }
-        });*/
+        });
         sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         sensorManager.registerListener(this,sensor,SensorManager.SENSOR_DELAY_NORMAL);
@@ -53,25 +53,21 @@ public class PlayActivity extends Activity implements SensorEventListener{
     public void onSensorChanged(SensorEvent event) {
         this.x =  event.values[0];
         this.y =  event.values[1];
-        //snakeBody.setLeft(0);
-        //snakeBody.setTop(0);
-        /*Log.i("info", snakeBody.getX() + " " + snakeBody.getY());*/
 
-
-        if(x<0){
-            snakeBody.setX(snakeBody.getLeft()+25);
+        if(x<0 && snakeBody.getX()<width-75){
+            snakeBody.setX(snakeBody.getX()+25);
             Log.i("info","right");
         }
-        if(x>0 && snakeBody.getLeft()>25){
-            snakeBody.setLeft(snakeBody.getLeft()-25);
+        if(x>0 && snakeBody.getX()>25){
+            snakeBody.setX(snakeBody.getX()-25);
             Log.i("info","left");
         }
-        if(y<0){
-            snakeBody.setTop(snakeBody.getTop()+25);
+        if(y>0 && snakeBody.getY()<height-75){
+            snakeBody.setY(snakeBody.getY()+25);
             Log.i("info","down");
         }
-        if(y>0 && snakeBody.getTop()>25){
-            snakeBody.setTop(snakeBody.getTop()-25);
+        if(y<0 && snakeBody.getY()>25){
+            snakeBody.setY(snakeBody.getY()-25);
             Log.i("info","up");
         }
     }
